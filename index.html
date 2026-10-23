@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PULSE Studio | Feel the Rhythm, Own the Stage</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#ff2d55',
+                            purple: '#833ab4',
+                            cyan: '#00f2fe',
+                            gold: '#ffd700',
+                            dark: '#0a0a0f',
+                            card: '#12121a',
+                            border: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s infinite alternate',
+                        'float': 'float 6s ease-in-out infinite',
+                        'wave': 'wave 1.2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 15px rgba(255, 45, 85, 0.3), 0 0 30px rgba(131, 58, 180, 0.2)' },
+                            '100%': { boxShadow: '0 0 35px rgba(255, 45, 85, 0.7), 0 0 60px rgba(0, 242, 254, 0.5)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-15px)' }
+                        },
+                        wave: {
+                            '0%': { height: '8px' },
+                            '100%': { height: '48px' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a38;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff2d55;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(18, 18, 26, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-nav {
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #ff2d55 0%, #833ab4 50%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text-gold {
+            background: linear-gradient(135deg, #ffd700 0%, #ff2d55 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Neon Glow Border Effect */
+        .neon-border-hover {
+            transition: all 0.3s ease;
+        }
+        .neon-border-hover:hover {
+            border-color: rgba(255, 45, 85, 0.6);
+            box-shadow: 0 0 20px rgba(255, 45, 85, 0.3);
+        }
+
+        /* Rhythm Tap Particle canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 99;
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-slate-100 font-sans selection:bg-brand-pink selection:text-white relative overflow-x-hidden">
+
+    <!-- Interactive Canvas for Rhythm Trail -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-gradient-to-r from-brand-pink via-brand-purple to-brand-cyan text-white text-xs font-semibold py-1.5 px-4 text-center tracking-wide flex items-center justify-center gap-2 relative z-50">
+        <span class="inline-block w-2 h-2 rounded-full bg-yellow-300 animate-ping"></span>
+        <span>🎉 SPRING REGISTRATION OPEN: Get 20% OFF Unlimited Pass with code <strong class="underline">PULSE2026</strong></span>
+    </div>
+
+    <!-- GLASS NAVIGATION BAR -->
+    <header class="sticky top-0 z-40 glass-nav transition-all duration-300" id="mainHeader">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- LOGO -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-pink to-brand-cyan flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                        <i data-lucide="activity" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="font-display text-2xl font-extrabold tracking-wider text-white">
+                        PULSE<span class="text-brand-pink">.</span>
+                    </span>
+                </a>
+
+                <!-- DESKTOP NAV LINKS -->
+                <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium">
+                    <a href="#home" class="hover:text-brand-pink transition-colors">Home</a>
+                    <a href="#styles" class="hover:text-brand-pink transition-colors">Dance Styles</a>
+                    <a href="#schedule" class="hover:text-brand-pink transition-colors">Schedule</a>
+                    <a href="#instructors" class="hover:text-brand-pink transition-colors">Instructors</a>
+                    <a href="#pricing" class="hover:text-brand-pink transition-colors">Pricing</a>
+                    <a href="#gallery" class="hover:text-brand-pink transition-colors">Gallery</a>
+                </nav>
+
+                <!-- NAV RIGHT CONTROLS -->
+                <div class="hidden sm:flex items-center space-x-4">
+                    <!-- Audio Beats Toggle -->
+                    <button id="audioToggle" onclick="toggleAudioBeat()" class="p-2.5 rounded-full glass-panel hover:border-brand-pink/50 text-slate-300 hover:text-white transition-all relative group" title="Toggle Studio Ambient Beat Visualizer">
+                        <i data-lucide="volume-2" id="audioIcon" class="w-5 h-5"></i>
+                        <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[10px] bg-brand-card px-2 py-0.5 rounded border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Ambient Beat</span>
+                    </button>
+
+                    <!-- CTA BUTTON -->
+                    <button onclick="openBookingModal('Free Trial Pass')" class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-semibold rounded-full group bg-gradient-to-br from-brand-pink via-brand-purple to-brand-cyan group-hover:from-brand-pink group-hover:to-brand-cyan hover:text-white text-white shadow-lg shadow-brand-pink/20 transition-all hover:scale-105">
+                        <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-brand-dark rounded-full group-hover:bg-opacity-0 flex items-center gap-2">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-brand-gold"></i>
+                            Book Free Trial
+                        </span>
+                    </button>
+                </div>
+
+                <!-- MOBILE MENU BUTTON -->
+                <div class="flex lg:hidden items-center gap-2">
+                    <button id="audioToggleMobile" onclick="toggleAudioBeat()" class="p-2 rounded-full glass-panel text-slate-300">
+                        <i data-lucide="volume-2" class="w-5 h-5"></i>
+                    </button>
+                    <button id="mobileMenuBtn" class="p-2.5 rounded-xl glass-panel text-slate-300 hover:text-white">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MOBILE NAVIGATION DRAWER -->
+        <div id="mobileMenu" class="hidden lg:hidden border-b border-white/10 bg-brand-dark/95 backdrop-blur-xl px-4 pt-2 pb-6 space-y-3">
+            <a href="#home" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-white/5 hover:text-brand-pink">Home</a>
+            <a href="#styles" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-white/5 hover:text-brand-pink">Dance Styles</a>
+            <a href="#schedule" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-white/5 hover:text-brand-pink">Schedule</a>
+            <a href="#instructors" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-white/5 hover:text-brand-pink">Instructors</a>
+            <a href="#pricing" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-white/5 hover:text-brand-pink">Pricing</a>
+            <a href="#gallery" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-white/5 hover:text-brand-pink">Gallery</a>
+            <div class="pt-2">
+                <button onclick="openBookingModal('Free Trial Pass')" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-pink to-brand-purple text-white font-bold text-center">
+                    Book Free Trial
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION 1: HERO SECTION -->
+    <section id="home" class="relative min-h-[90vh] flex items-center justify-center pt-12 pb-20 overflow-hidden">
+        <!-- Ambient Glowing Background Lights -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-pink/20 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute top-1/3 right-10 w-[350px] h-[350px] bg-brand-cyan/20 rounded-full blur-[100px] pointer-events-none"></div>
+        <div class="absolute bottom-10 left-10 w-[300px] h-[300px] bg-brand-purple/20 rounded-full blur-[90px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- HERO LEFT CONTENT -->
+                <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
+                    
+                    <!-- Energy Badge -->
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-brand-pink/30 text-xs sm:text-sm font-medium text-brand-pink animate-pulse">
+                        <span class="w-2 h-2 rounded-full bg-brand-pink"></span>
+                        Voted #1 Dance Studio in New York • 2026
+                    </div>
+
+                    <!-- Main Glowing Headline -->
+                    <h1 class="font-display text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.1]">
+                        FEEL THE <span class="gradient-text">RHYTHM,</span><br>
+                        OWN THE <span class="gradient-text-gold">STAGE.</span>
+                    </h1>
+
+                    <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light">
+                        Elevate your movement with world-class choreographers. Join high-energy Hip Hop, Latin Salsa, Contemporary, and Street Jazz classes for all skill levels.
+                    </p>
+
+                    <!-- CTA BUTTONS -->
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4">
+                        <a href="#schedule" class="px-8 py-4 rounded-full bg-gradient-to-r from-brand-pink to-brand-purple text-white font-bold shadow-lg shadow-brand-pink/30 hover:shadow-brand-pink/50 hover:scale-105 transition-all flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                            Explore Classes
+                        </a>
+                        <button onclick="openVideoModal('https://www.youtube.com/embed/dQw4w9WgXcQ')" class="px-8 py-4 rounded-full glass-panel hover:bg-white/10 text-white font-semibold transition-all border border-white/20 flex items-center gap-2 group">
+                            <div class="w-7 h-7 rounded-full bg-brand-pink/20 flex items-center justify-center group-hover:bg-brand-pink transition-colors">
+                                <i data-lucide="play" class="w-4 h-4 text-white fill-current"></i>
+                            </div>
+                            Watch 2026 Reel
+                        </button>
+                    </div>
+
+                    <!-- QUICK STATS & AUDIO VISUALIZER BAR -->
+                    <div class="pt-6 border-t border-white/10 grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0">
+                        <div>
+                            <div class="text-2xl sm:text-3xl font-extrabold text-white">25+</div>
+                            <div class="text-xs text-slate-400">Dance Styles</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl sm:text-3xl font-extrabold text-white">4.9★</div>
+                            <div class="text-xs text-slate-400">1,200+ Reviews</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl sm:text-3xl font-extrabold text-white">15K+</div>
+                            <div class="text-xs text-slate-400">Active Dancers</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HERO RIGHT: DYNAMIC GRAPHIC & AUDIO VISUALIZER CARD -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md lg:max-w-none">
+                        
+                        <!-- Main Card Frame -->
+                        <div class="relative rounded-3xl overflow-hidden glass-panel border border-white/15 shadow-2xl p-4 animate-float">
+                            <div class="relative h-[380px] sm:h-[420px] rounded-2xl overflow-hidden group">
+                                <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&w=800&q=80" alt="Dancers performing" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent"></div>
+
+                                <!-- Overlay Audio Rhythm Wave Animation -->
+                                <div class="absolute bottom-4 left-4 right-4 p-4 rounded-xl glass-panel border border-white/20 flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-brand-pink/30 flex items-center justify-center text-brand-pink">
+                                            <i data-lucide="music" class="w-5 h-5"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs text-brand-pink font-semibold uppercase tracking-wider">Now Playing</div>
+                                            <div class="text-sm font-bold text-white">Studio Beats BPM 128</div>
+                                        </div>
+                                    </div>
+                                    <!-- Dynamic Wave Equalizer -->
+                                    <div class="flex items-end gap-1 h-8" id="heroEqualizer">
+                                        <span class="w-1 bg-brand-pink rounded-full animate-wave" style="animation-delay: 0.1s"></span>
+                                        <span class="w-1 bg-brand-purple rounded-full animate-wave" style="animation-delay: 0.3s"></span>
+                                        <span class="w-1 bg-brand-cyan rounded-full animate-wave" style="animation-delay: 0.2s"></span>
+                                        <span class="w-1 bg-brand-pink rounded-full animate-wave" style="animation-delay: 0.4s"></span>
+                                        <span class="w-1 bg-brand-gold rounded-full animate-wave" style="animation-delay: 0.15s"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Floating Badges -->
+                        <div class="absolute -top-6 -left-6 glass-panel px-4 py-3 rounded-2xl border border-white/15 flex items-center gap-3 shadow-xl hidden sm:flex">
+                            <div class="w-10 h-10 rounded-full bg-brand-pink/20 flex items-center justify-center text-brand-pink">
+                                <i data-lucide="flame" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-400">Energy Level</div>
+                                <div class="text-sm font-bold text-white">Maximum Beat ⚡</div>
+                            </div>
+                        </div>
+
+                        <div class="absolute -bottom-6 -right-6 glass-panel px-4 py-3 rounded-2xl border border-white/15 flex items-center gap-3 shadow-xl hidden sm:flex">
+                            <div class="w-10 h-10 rounded-full bg-brand-cyan/20 flex items-center justify-center text-brand-cyan">
+                                <i data-lucide="award" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-400">Certified Instructors</div>
+                                <div class="text-sm font-bold text-white">Pro Masters</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: DANCE STYLES SHOWCASE -->
+    <section id="styles" class="py-20 relative bg-brand-dark/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-pink font-semibold tracking-wider uppercase text-xs sm:text-sm">Explore Styles</span>
+                <h2 class="font-display text-3xl sm:text-5xl font-extrabold mt-2 text-white">
+                    Master Every <span class="gradient-text">Genre</span>
+                </h2>
+                <p class="text-slate-400 mt-4 text-base">From high-impact street urban beats to graceful contemporary storytelling, pick your rhythm.</p>
+            </div>
+
+            <!-- Styles Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="danceStylesGrid">
+                <!-- Javascript dynamically renders styles cards -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE WEEKLY CLASS SCHEDULE -->
+    <section id="schedule" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                <div>
+                    <span class="text-brand-cyan font-semibold tracking-wider uppercase text-xs sm:text-sm">Live Timetable</span>
+                    <h2 class="font-display text-3xl sm:text-5xl font-extrabold mt-2 text-white">Weekly <span class="gradient-text">Class Schedule</span></h2>
+                </div>
+
+                <!-- Level Filters -->
+                <div class="flex flex-wrap gap-2 glass-panel p-1.5 rounded-2xl border border-white/10">
+                    <button onclick="filterSchedule('all')" class="schedule-level-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-brand-pink text-white">All Levels</button>
+                    <button onclick="filterSchedule('Beginner')" class="schedule-level-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all hover:bg-white/10 text-slate-300">Beginner</button>
+                    <button onclick="filterSchedule('Intermediate')" class="schedule-level-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all hover:bg-white/10 text-slate-300">Intermediate</button>
+                    <button onclick="filterSchedule('Advanced')" class="schedule-level-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all hover:bg-white/10 text-slate-300">Advanced</button>
+                </div>
+            </div>
+
+            <!-- DAY SELECTOR TABS -->
+            <div class="flex overflow-x-auto space-x-2 pb-4 mb-8 no-scrollbar" id="dayTabsContainer">
+                <!-- Javascript inserts Mon-Sun tabs -->
+            </div>
+
+            <!-- SCHEDULE GRID DISPLAY -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="scheduleCardsContainer">
+                <!-- Dynamic schedule cards rendered via Javascript -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 4: WORLD-CLASS INSTRUCTORS -->
+    <section id="instructors" class="py-20 bg-brand-card/40 border-y border-white/5 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-purple font-semibold tracking-wider uppercase text-xs sm:text-sm">Meet The Mentors</span>
+                <h2 class="font-display text-3xl sm:text-5xl font-extrabold mt-2 text-white">World-Class <span class="gradient-text">Choreographers</span></h2>
+                <p class="text-slate-400 mt-4">Learn directly from celebrity dancers, international champions, and passionate movement artists.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8" id="instructorsGrid">
+                <!-- Javascript Populates Instructors -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 5: MEMBERSHIP CALCULATOR & PRICING -->
+    <section id="pricing" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-brand-gold font-semibold tracking-wider uppercase text-xs sm:text-sm">Flexible Passes</span>
+                <h2 class="font-display text-3xl sm:text-5xl font-extrabold mt-2 text-white">Pick Your <span class="gradient-text-gold">Pass</span></h2>
+                <p class="text-slate-400 mt-4">Transparent pricing with no long-term contracts. Cancel or pause anytime.</p>
+                
+                <!-- Monthly vs Annual Toggle -->
+                <div class="flex items-center justify-center gap-4 mt-8">
+                    <span id="monthlyLabel" class="text-sm font-semibold text-white">Monthly</span>
+                    <button id="billingToggle" onclick="toggleBilling()" class="w-14 h-8 rounded-full bg-brand-card border border-brand-pink/40 p-1 flex items-center transition-colors">
+                        <div id="toggleCircle" class="w-6 h-6 rounded-full bg-brand-pink transition-transform"></div>
+                    </button>
+                    <span id="annualLabel" class="text-sm font-semibold text-slate-400 flex items-center gap-1.5">
+                        Annual 
+                        <span class="px-2 py-0.5 rounded-full bg-brand-pink/20 text-brand-pink text-[10px] font-extrabold uppercase">Save 25%</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- PRICING CARDS -->
+            <div class="grid md:grid-cols-3 gap-8 items-stretch">
+                
+                <!-- Plan 1: Drop-In -->
+                <div class="glass-panel p-8 rounded-3xl border border-white/10 flex flex-col justify-between hover:border-brand-cyan/50 transition-all group">
+                    <div>
+                        <div class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Single Session</div>
+                        <h3 class="text-2xl font-bold text-white mt-1">Casual Drop-In</h3>
+                        <div class="mt-6 mb-6">
+                            <span class="text-4xl font-extrabold text-white">$28</span>
+                            <span class="text-slate-400 text-sm"> / class</span>
+                        </div>
+                        <ul class="space-y-4 text-sm text-slate-300 mb-8">
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-cyan"></i> Access to any 1 class style</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-cyan"></i> Free studio locker usage</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-cyan"></i> Valid for 14 days</li>
+                            <li class="flex items-center gap-3 text-slate-500 line-through"><i data-lucide="x" class="w-4 h-4 text-slate-600"></i> Open practice space</li>
+                        </ul>
+                    </div>
+                    <button onclick="openBookingModal('Casual Drop-In')" class="w-full py-3.5 rounded-2xl glass-panel hover:bg-white/10 text-white font-semibold transition-all">Select Pass</button>
+                </div>
+
+                <!-- Plan 2: POPULAR Monthly Unlimited -->
+                <div class="glass-panel p-8 rounded-3xl border-2 border-brand-pink relative flex flex-col justify-between shadow-2xl shadow-brand-pink/20 hover:scale-105 transition-all">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-pink to-brand-purple text-white text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full shadow-lg">
+                        Most Popular
+                    </div>
+                    <div>
+                        <div class="text-brand-pink text-sm font-semibold uppercase tracking-wider">Unlimited Access</div>
+                        <h3 class="text-2xl font-bold text-white mt-1">Monthly Unlimited</h3>
+                        <div class="mt-6 mb-6">
+                            <span class="text-5xl font-extrabold text-white price-amount" data-monthly="129" data-annual="99">$129</span>
+                            <span class="text-slate-400 text-sm"> / month</span>
+                        </div>
+                        <ul class="space-y-4 text-sm text-slate-300 mb-8">
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brand-pink"></i> Unlimited group classes per month</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brand-pink"></i> Priority class spot reservation</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brand-pink"></i> 2 Free guest passes / month</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brand-pink"></i> Free masterclass workshops</li>
+                        </ul>
+                    </div>
+                    <button onclick="openBookingModal('Monthly Unlimited')" class="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-purple text-white font-bold shadow-lg shadow-brand-pink/40 hover:opacity-90 transition-all">Get Started Now</button>
+                </div>
+
+                <!-- Plan 3: VIP Pro -->
+                <div class="glass-panel p-8 rounded-3xl border border-white/10 flex flex-col justify-between hover:border-brand-gold/50 transition-all group">
+                    <div>
+                        <div class="text-brand-gold text-sm font-semibold uppercase tracking-wider">Pro Athlete</div>
+                        <h3 class="text-2xl font-bold text-white mt-1">VIP Pro & Private</h3>
+                        <div class="mt-6 mb-6">
+                            <span class="text-4xl font-extrabold text-white price-amount" data-monthly="249" data-annual="199">$249</span>
+                            <span class="text-slate-400 text-sm"> / month</span>
+                        </div>
+                        <ul class="space-y-4 text-sm text-slate-300 mb-8">
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-gold"></i> Everything in Unlimited</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-gold"></i> 2 Private 1-on-1 sessions monthly</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-gold"></i> Personalized choreography feedback</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-gold"></i> Video studio recording access</li>
+                        </ul>
+                    </div>
+                    <button onclick="openBookingModal('VIP Pro Membership')" class="w-full py-3.5 rounded-2xl glass-panel hover:bg-white/10 text-white font-semibold transition-all">Choose VIP Pro</button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 6: INTERACTIVE GALLERY & VIDEO SHOWCASE -->
+    <section id="gallery" class="py-20 bg-brand-dark/60 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                <div>
+                    <span class="text-brand-pink font-semibold tracking-wider uppercase text-xs sm:text-sm">Visual Showcase</span>
+                    <h2 class="font-display text-3xl sm:text-5xl font-extrabold mt-2 text-white">Studio <span class="gradient-text">Life & Stage</span></h2>
+                </div>
+
+                <!-- Gallery Category Filter -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterGallery('all')" class="gallery-filter-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-brand-pink text-white">All Media</button>
+                    <button onclick="filterGallery('performances')" class="gallery-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold glass-panel text-slate-300 hover:text-white">Performances</button>
+                    <button onclick="filterGallery('workshops')" class="gallery-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold glass-panel text-slate-300 hover:text-white">Workshops</button>
+                    <button onclick="filterGallery('behind')" class="gallery-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold glass-panel text-slate-300 hover:text-white">Studio Vibe</button>
+                </div>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="galleryGrid">
+                <!-- Dynamic Javascript images -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 7: DYNAMIC TESTIMONIALS & INSTAGRAM FEED -->
+    <section class="py-20 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-cyan font-semibold tracking-wider uppercase text-xs sm:text-sm">Loved By Dancers</span>
+                <h2 class="font-display text-3xl sm:text-5xl font-extrabold mt-2 text-white">Dancer <span class="gradient-text">Stories</span></h2>
+            </div>
+
+            <!-- TESTIMONIAL SLIDER/CARDS -->
+            <div class="grid md:grid-cols-3 gap-8">
+                
+                <div class="glass-panel p-6 rounded-3xl border border-white/10 relative">
+                    <div class="flex items-center gap-1 text-brand-gold mb-4">
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6 italic">"PULSE transformed my confidence completely! The hip hop choreography is insane and the community feels like a real family."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Mia K." class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <div class="text-sm font-bold text-white">Mia K.</div>
+                            <div class="text-xs text-slate-400">Hip Hop & Urban Member</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-3xl border border-white/10 relative">
+                    <div class="flex items-center gap-1 text-brand-gold mb-4">
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6 italic">"As a complete beginner, I was nervous. The instructors make every step easy to learn and super fun. 10/10 recommendation!"</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Lucas R." class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <div class="text-sm font-bold text-white">Lucas R.</div>
+                            <div class="text-xs text-slate-400">Salsa & Bachata Student</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-3xl border border-white/10 relative">
+                    <div class="flex items-center gap-1 text-brand-gold mb-4">
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6 italic">"The contemporary studio workshops here elevated my technique for professional auditions. Best sound system & vibe."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80" alt="Elena V." class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <div class="text-sm font-bold text-white">Elena V.</div>
+                            <div class="text-xs text-slate-400">Contemporary Intensive</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 8: BOOKING & FREE PASS CONTACT SECTION -->
+    <section id="contact" class="py-20 relative bg-brand-card/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid lg:grid-cols-12 gap-12 items-center glass-panel p-8 sm:p-12 rounded-3xl border border-white/10 relative overflow-hidden">
+                
+                <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-brand-pink/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- LEFT INFO -->
+                <div class="lg:col-span-5 space-y-6">
+                    <span class="text-brand-pink font-semibold uppercase text-xs tracking-wider">Claim Free Pass</span>
+                    <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-white">Start Your <span class="gradient-text">Dance Journey</span> Today</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Ready to drop into a class? Fill out the quick form to claim a 100% Free First Pass. No credit card required.
+                    </p>
+
+                    <div class="space-y-4 pt-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brand-pink/20 flex items-center justify-center text-brand-pink">
+                                <i data-lucide="map-pin" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-400">Studio Location</div>
+                                <div class="text-sm font-semibold text-white">450 Rhythm Avenue, Dance District, NY</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brand-cyan/20 flex items-center justify-center text-brand-cyan">
+                                <i data-lucide="phone" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-400">Call / WhatsApp</div>
+                                <div class="text-sm font-semibold text-white">+1 (555) 019-DANCE</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-400">Email Enquiries</div>
+                                <div class="text-sm font-semibold text-white">hello@pulsedance.com</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT QUICK BOOKING FORM -->
+                <div class="lg:col-span-7">
+                    <form onsubmit="handleDirectBooking(event)" class="space-y-4">
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
+                                <input type="text" required placeholder="Alex Rivera" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-brand-pink transition-colors text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+                                <input type="email" required placeholder="alex@example.com" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-brand-pink transition-colors text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Preferred Dance Style</label>
+                                <select class="w-full px-4 py-3 rounded-xl bg-brand-card border border-white/10 text-white focus:outline-none focus:border-brand-pink transition-colors text-sm">
+                                    <option>Urban Hip Hop</option>
+                                    <option>Salsa & Bachata</option>
+                                    <option>Contemporary Fusion</option>
+                                    <option>Street Jazz</option>
+                                    <option>Bollywood Energetic</option>
+                                    <option>Breakdancing Basics</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Skill Level</label>
+                                <select class="w-full px-4 py-3 rounded-xl bg-brand-card border border-white/10 text-white focus:outline-none focus:border-brand-pink transition-colors text-sm">
+                                    <option>Absolute Beginner</option>
+                                    <option>Intermediate (1-2 yrs)</option>
+                                    <option>Advanced / Pro</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Special Notes / Goals</label>
+                            <textarea rows="3" placeholder="Tell us about your fitness or dance goals..." class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-brand-pink transition-colors text-sm"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-pink via-brand-purple to-brand-cyan text-white font-bold hover:opacity-95 shadow-lg shadow-brand-pink/30 transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="ticket" class="w-5 h-5"></i>
+                            Claim Free Pass
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-white/10 bg-brand-dark py-12 text-slate-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                
+                <div class="col-span-2 md:col-span-1 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-brand-pink flex items-center justify-center text-white">
+                            <i data-lucide="activity" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-display text-xl font-bold text-white">PULSE.</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">High energy dance training for movement enthusiasts, competitors, and passionate beginners.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Quick Links</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#styles" class="hover:text-brand-pink">Dance Styles</a></li>
+                        <li><a href="#schedule" class="hover:text-brand-pink">Class Schedule</a></li>
+                        <li><a href="#instructors" class="hover:text-brand-pink">Instructors</a></li>
+                        <li><a href="#pricing" class="hover:text-brand-pink">Membership Plans</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Dance Genres</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#" class="hover:text-brand-pink">Hip Hop & Urban</a></li>
+                        <li><a href="#" class="hover:text-brand-pink">Salsa & Bachata</a></li>
+                        <li><a href="#" class="hover:text-brand-pink">Contemporary</a></li>
+                        <li><a href="#" class="hover:text-brand-pink">Street Jazz</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Connect With Us</h4>
+                    <div class="flex gap-3 text-white mb-4">
+                        <a href="#" class="p-2 rounded-lg glass-panel hover:text-brand-pink"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                        <a href="#" class="p-2 rounded-lg glass-panel hover:text-brand-pink"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+                        <a href="#" class="p-2 rounded-lg glass-panel hover:text-brand-pink"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+                    </div>
+                    <p class="text-xs text-slate-500">© 2026 PULSE Dance Inc. All rights reserved.</p>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE BOOKING DRAWER / MODAL -->
+    <div id="bookingModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-panel border border-white/20 w-full max-w-md rounded-3xl p-6 sm:p-8 relative animate-float shadow-2xl">
+            <button onclick="closeBookingModal()" class="absolute top-4 right-4 p-2 rounded-full glass-panel text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-brand-pink/20 text-brand-pink flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="calendar-check" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white" id="modalPlanTitle">Reserve Your Class</h3>
+                <p class="text-xs text-slate-400 mt-1">Instant confirmation sent straight to your email</p>
+            </div>
+
+            <form onsubmit="confirmModalBooking(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Selected Pass / Class</label>
+                    <input type="text" id="modalPlanInput" readonly class="w-full px-4 py-2.5 rounded-xl bg-brand-card border border-brand-pink/40 text-brand-pink font-semibold text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Your Full Name</label>
+                    <input type="text" required placeholder="Jordan Smith" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-brand-pink text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+                    <input type="email" required placeholder="jordan@example.com" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-brand-pink text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Preferred Date</label>
+                    <input type="date" required class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-brand-pink text-sm">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-pink to-brand-purple text-white font-bold shadow-lg shadow-brand-pink/30 hover:opacity-90 transition-all">
+                    Confirm Reservation
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- VIDEO PLAYER MODAL -->
+    <div id="videoModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <div class="relative w-full max-w-4xl rounded-2xl overflow-hidden glass-panel border border-white/20">
+            <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/60 text-white hover:bg-brand-pink">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="aspect-video w-full">
+                <iframe id="videoIframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONFIRMATION TOAST NOTIFICATION -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 hidden glass-panel border border-brand-pink px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-brand-pink/20 text-brand-pink flex items-center justify-center">
+            <i data-lucide="check" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <div class="text-sm font-bold text-white" id="toastTitle">Success!</div>
+            <div class="text-xs text-slate-300" id="toastMessage">Your spot is reserved. Check your email!</div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // DATA SOURCES
+        const DANCE_STYLES = [
+            {
+                id: 'hiphop',
+                title: 'Urban Hip Hop',
+                level: 'All Levels',
+                instructor: 'Marcus Vance',
+                image: 'https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&w=600&q=80',
+                desc: 'High-energy groove, body isolations, and current commercial choreography.',
+                energy: 'High 🔥',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+            },
+            {
+                id: 'salsa',
+                title: 'Salsa & Bachata',
+                level: 'Beginner / Int',
+                instructor: 'Sofia & Carlos',
+                image: 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?auto=format&fit=crop&w=600&q=80',
+                desc: 'Sensual partner work, fast footwork, turn patterns, and Latin rhythms.',
+                energy: 'Vibrant 💃',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+            },
+            {
+                id: 'contemporary',
+                title: 'Contemporary Fusion',
+                level: 'Intermediate',
+                instructor: 'Elena Rostova',
+                image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
+                desc: 'Expressive floorwork, fluid momentum, release technique, and emotional storytelling.',
+                energy: 'Flow 🌊',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+            },
+            {
+                id: 'jazz',
+                title: 'Street Jazz & Heels',
+                level: 'Intermediate',
+                instructor: 'Aaliyah Chen',
+                image: 'https://images.unsplash.com/photo-1518834107812-67b0b7c58434?auto=format&fit=crop&w=600&q=80',
+                desc: 'Fierce posture, lines, performance attitude, and sassy commercial heels choreography.',
+                energy: 'Power ⚡',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+            },
+            {
+                id: 'bollywood',
+                title: 'Bollywood Beats',
+                level: 'All Levels',
+                instructor: 'Rohan Sharma',
+                image: 'https://images.unsplash.com/photo-1535525153412-5a42439e210d?auto=format&fit=crop&w=600&q=80',
+                desc: 'High-power folk and cinematic fusion filled with vibrant expressions and cardio.',
+                energy: 'Electrifying 🎉',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+            },
+            {
+                id: 'breakdance',
+                title: 'Breakdancing & Power',
+                level: 'Advanced',
+                instructor: 'B-Boy Flex',
+                image: 'https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?auto=format&fit=crop&w=600&q=80',
+                desc: 'Toprock, footwork freezes, power moves, and freestyle battle dynamics.',
+                energy: 'Extreme 💥',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+            }
+        ];
+
+        const SCHEDULE_DATA = [
+            { day: 'Mon', time: '05:30 PM', style: 'Urban Hip Hop', level: 'Beginner', instructor: 'Marcus Vance', room: 'Studio A', spots: 4 },
+            { day: 'Mon', time: '07:00 PM', style: 'Contemporary Fusion', level: 'Intermediate', instructor: 'Elena Rostova', room: 'Studio B', spots: 2 },
+            { day: 'Tue', time: '06:00 PM', style: 'Salsa & Bachata', level: 'Beginner', instructor: 'Sofia & Carlos', room: 'Studio A', spots: 6 },
+            { day: 'Tue', time: '07:30 PM', style: 'Street Jazz & Heels', level: 'Advanced', instructor: 'Aaliyah Chen', room: 'Studio C', spots: 1 },
+            { day: 'Wed', time: '05:00 PM', style: 'Bollywood Beats', level: 'All Levels', instructor: 'Rohan Sharma', room: 'Studio A', spots: 8 },
+            { day: 'Wed', time: '06:30 PM', style: 'Breakdancing', level: 'Advanced', instructor: 'B-Boy Flex', room: 'Studio B', spots: 3 },
+            { day: 'Thu', time: '06:00 PM', style: 'Urban Hip Hop', level: 'Intermediate', instructor: 'Marcus Vance', room: 'Studio A', spots: 5 },
+            { day: 'Fri', time: '07:00 PM', style: 'Salsa Night Social', level: 'All Levels', instructor: 'Sofia & Carlos', room: 'Main Stage', spots: 12 },
+            { day: 'Sat', time: '11:00 AM', style: 'Contemporary Intensive', level: 'Advanced', instructor: 'Elena Rostova', room: 'Studio B', spots: 2 },
+            { day: 'Sun', time: '02:00 PM', style: 'Sunday Hip Hop Jam', level: 'Beginner', instructor: 'Marcus Vance', room: 'Studio A', spots: 7 },
+        ];
+
+        const INSTRUCTORS = [
+            {
+                name: 'Marcus Vance',
+                role: 'Hip Hop Master',
+                image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80',
+                bio: 'Choreographed for World of Dance & Grammy winning music tours.',
+                specialty: 'Urban / Isolation'
+            },
+            {
+                name: 'Elena Rostova',
+                role: 'Contemporary Lead',
+                image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80',
+                bio: 'Former principal soloist with 12+ years of international stage experience.',
+                specialty: 'Floorwork / Release'
+            },
+            {
+                name: 'Sofia & Carlos',
+                role: 'Latin Dance Directors',
+                image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=500&q=80',
+                bio: 'World Salsa Champions with passion for social partner technique.',
+                specialty: 'Salsa / Bachata'
+            },
+            {
+                name: 'Aaliyah Chen',
+                role: 'Commercial Heels Specialist',
+                image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=500&q=80',
+                bio: 'Featured dancer in music videos, commercial ad campaigns, and fashion shows.',
+                specialty: 'Jazz / Heels'
+            }
+        ];
+
+        const GALLERY_ITEMS = [
+            { cat: 'performances', img: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80', title: 'Annual Pulse Showcase 2025' },
+            { cat: 'workshops', img: 'https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&w=600&q=80', title: 'LA Guest Choreographer Workshop' },
+            { cat: 'behind', img: 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?auto=format&fit=crop&w=600&q=80', title: 'Studio Rehearsal Vibes' },
+            { cat: 'performances', img: 'https://images.unsplash.com/photo-1518834107812-67b0b7c58434?auto=format&fit=crop&w=600&q=80', title: 'Urban Battle Championship' },
+            { cat: 'workshops', img: 'https://images.unsplash.com/photo-1535525153412-5a42439e210d?auto=format&fit=crop&w=600&q=80', title: 'Contemporary Masterclass' },
+            { cat: 'behind', img: 'https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?auto=format&fit=crop&w=600&q=80', title: 'Late Night Practice Room' },
+        ];
+
+        // STATE VARIABLES
+        let activeDay = 'Mon';
+        let activeScheduleLevel = 'all';
+        let isAnnual = false;
+        let isAudioPlaying = false;
+        let audioSynth = null;
+
+        // INITIALIZATION
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderDanceStyles();
+            renderDayTabs();
+            renderSchedule();
+            renderInstructors();
+            renderGallery('all');
+            initParticleCanvas();
+
+            // Mobile menu toggle
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        });
+
+        // 1. RENDER DANCE STYLES SHOWCASE
+        function renderDanceStyles() {
+            const container = document.getElementById('danceStylesGrid');
+            container.innerHTML = DANCE_STYLES.map(style => `
+                <div class="glass-panel rounded-3xl overflow-hidden border border-white/10 group hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between">
+                    <div class="relative h-52 overflow-hidden">
+                        <img src="${style.image}" alt="${style.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                        
+                        <span class="absolute top-4 left-4 glass-panel px-3 py-1 rounded-full text-xs font-semibold text-brand-pink border border-brand-pink/30">
+                            ${style.energy}
+                        </span>
+
+                        <button onclick="openVideoModal('${style.videoUrl}')" class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                            <div class="w-12 h-12 rounded-full bg-brand-pink text-white flex items-center justify-center shadow-lg shadow-brand-pink/50 scale-90 hover:scale-100 transition-transform">
+                                <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="p-6 space-y-3 flex-grow flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                                <span>Level: <strong class="text-white">${style.level}</strong></span>
+                                <span>Mentored by ${style.instructor}</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white group-hover:text-brand-pink transition-colors">${style.title}</h3>
+                            <p class="text-xs text-slate-300 mt-2 leading-relaxed">${style.desc}</p>
+                        </div>
+
+                        <button onclick="openBookingModal('${style.title}')" class="w-full py-2.5 rounded-xl glass-panel hover:bg-brand-pink hover:text-white border border-white/10 text-xs font-bold text-slate-200 transition-all flex items-center justify-center gap-1.5 mt-4">
+                            Try This Style
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // 2. SCHEDULE DAY TABS & FILTERING
+        function renderDayTabs() {
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const container = document.getElementById('dayTabsContainer');
+            container.innerHTML = days.map(d => `
+                <button onclick="selectDay('${d}')" class="px-6 py-3 rounded-2xl text-sm font-bold transition-all whitespace-nowrap ${d === activeDay ? 'bg-gradient-to-r from-brand-pink to-brand-purple text-white shadow-lg shadow-brand-pink/30' : 'glass-panel text-slate-400 hover:text-white'}">
+                    ${d}
+                </button>
+            `).join('');
+        }
+
+        function selectDay(day) {
+            activeDay = day;
+            renderDayTabs();
+            renderSchedule();
+        }
+
+        function filterSchedule(level) {
+            activeScheduleLevel = level;
+            document.querySelectorAll('.schedule-level-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-pink', 'text-white');
+                btn.classList.add('hover:bg-white/10', 'text-slate-300');
+            });
+            event.target.classList.add('bg-brand-pink', 'text-white');
+            event.target.classList.remove('hover:bg-white/10', 'text-slate-300');
+            renderSchedule();
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById('scheduleCardsContainer');
+            let filtered = SCHEDULE_DATA.filter(item => item.day === activeDay);
+            
+            if (activeScheduleLevel !== 'all') {
+                filtered = filtered.filter(item => item.level.toLowerCase() === activeScheduleLevel.toLowerCase());
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-400 glass-panel rounded-3xl">
+                        <i data-lucide="calendar-x" class="w-8 h-8 mx-auto mb-2 text-slate-500"></i>
+                        <p class="text-sm">No classes scheduled for this filter on ${activeDay}.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = filtered.map(c => `
+                <div class="glass-panel p-6 rounded-3xl border border-white/10 hover:border-brand-pink/40 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between text-xs mb-3">
+                            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 font-mono text-brand-cyan">${c.time}</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${c.spots <= 2 ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-400'}">
+                                ${c.spots} Spots Left
+                            </span>
+                        </div>
+
+                        <h4 class="text-lg font-bold text-white group-hover:text-brand-pink transition-colors">${c.style}</h4>
+                        
+                        <div class="space-y-1.5 mt-3 text-xs text-slate-300">
+                            <div class="flex items-center gap-2"><i data-lucide="user" class="w-3.5 h-3.5 text-brand-pink"></i> Instructor: ${c.instructor}</div>
+                            <div class="flex items-center gap-2"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-purple"></i> Location: ${c.room}</div>
+                            <div class="flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-brand-cyan"></i> Level: ${c.level}</div>
+                        </div>
+                    </div>
+
+                    <button onclick="openBookingModal('${c.style} (${c.day} @ ${c.time})')" class="w-full mt-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-pink to-brand-purple text-white text-xs font-bold hover:opacity-90 shadow-md shadow-brand-pink/20 transition-all">
+                        Reserve Spot
+                    </button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // 3. RENDER INSTRUCTORS
+        function renderInstructors() {
+            const container = document.getElementById('instructorsGrid');
+            container.innerHTML = INSTRUCTORS.map(ins => `
+                <div class="glass-panel rounded-3xl p-4 border border-white/10 group hover:border-brand-purple/50 transition-all text-center">
+                    <div class="relative w-full h-64 rounded-2xl overflow-hidden mb-4">
+                        <img src="${ins.image}" alt="${ins.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 left-1/2 -translate-x-1/2 glass-panel px-3 py-1 rounded-full text-[10px] font-bold text-brand-gold border border-brand-gold/30 whitespace-nowrap">
+                            ${ins.specialty}
+                        </span>
+                    </div>
+
+                    <h3 class="text-lg font-bold text-white">${ins.name}</h3>
+                    <p class="text-xs text-brand-pink font-semibold mt-0.5">${ins.role}</p>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">${ins.bio}</p>
+
+                    <div class="flex justify-center gap-2 mt-4 text-slate-400">
+                        <a href="#" class="p-2 rounded-full glass-panel hover:text-white"><i data-lucide="instagram" class="w-3.5 h-3.5"></i></a>
+                        <a href="#" class="p-2 rounded-full glass-panel hover:text-white"><i data-lucide="youtube" class="w-3.5 h-3.5"></i></a>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // 4. GALLERY RENDER & FILTERING
+        function renderGallery(cat) {
+            const container = document.getElementById('galleryGrid');
+            const items = cat === 'all' ? GALLERY_ITEMS : GALLERY_ITEMS.filter(i => i.cat === cat);
+
+            container.innerHTML = items.map(item => `
+                <div class="glass-panel rounded-2xl overflow-hidden border border-white/10 group hover:border-brand-pink/50 transition-all relative h-64">
+                    <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-brand-pink tracking-widest">${item.cat}</span>
+                            <h4 class="text-sm font-bold text-white mt-1">${item.title}</h4>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterGallery(cat) {
+            document.querySelectorAll('.gallery-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-pink', 'text-white');
+                btn.classList.add('glass-panel', 'text-slate-300');
+            });
+            event.target.classList.add('bg-brand-pink', 'text-white');
+            event.target.classList.remove('glass-panel', 'text-slate-300');
+            renderGallery(cat);
+        }
+
+        // 5. PRICING BILLING TOGGLE
+        function toggleBilling() {
+            isAnnual = !isAnnual;
+            const circle = document.getElementById('toggleCircle');
+            const monthlyLabel = document.getElementById('monthlyLabel');
+            const annualLabel = document.getElementById('annualLabel');
+            const priceAmounts = document.querySelectorAll('.price-amount');
+
+            if (isAnnual) {
+                circle.style.transform = 'translateX(24px)';
+                monthlyLabel.classList.replace('text-white', 'text-slate-400');
+                annualLabel.classList.replace('text-slate-400', 'text-white');
+            } else {
+                circle.style.transform = 'translateX(0px)';
+                monthlyLabel.classList.replace('text-slate-400', 'text-white');
+                annualLabel.classList.replace('text-white', 'text-slate-400');
+            }
+
+            priceAmounts.forEach(el => {
+                const monthly = el.getAttribute('data-monthly');
+                const annual = el.getAttribute('data-annual');
+                el.textContent = '$' + (isAnnual ? annual : monthly);
+            });
+        }
+
+        // 6. MODAL & TOAST HANDLERS
+        function openBookingModal(planName) {
+            document.getElementById('modalPlanTitle').textContent = 'Book ' + planName;
+            document.getElementById('modalPlanInput').value = planName;
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+        }
+
+        function confirmModalBooking(e) {
+            e.preventDefault();
+            closeBookingModal();
+            showToast('Pass Confirmed!', 'We sent your pass code to your email.');
+        }
+
+        function handleDirectBooking(e) {
+            e.preventDefault();
+            showToast('Free Pass Claimed!', 'Check your inbox for your digital studio pass.');
+            e.target.reset();
+        }
+
+        function showToast(title, msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4000);
+        }
+
+        function openVideoModal(url) {
+            document.getElementById('videoIframe').src = url;
+            document.getElementById('videoModal').classList.remove('hidden');
+        }
+
+        function closeVideoModal() {
+            document.getElementById('videoIframe').src = '';
+            document.getElementById('videoModal').classList.add('hidden');
+        }
+
+        // 7. WEB AUDIO AMBIENT BEAT SYNTHESIZER
+        function toggleAudioBeat() {
+            const audioIcon = document.getElementById('audioIcon');
+            
+            if (!isAudioPlaying) {
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    const ctx = new AudioContext();
+                    
+                    // Simple ambient dance beat rhythm loop
+                    let step = 0;
+                    const interval = setInterval(() => {
+                        if (!isAudioPlaying) {
+                            clearInterval(interval);
+                            ctx.close();
+                            return;
+                        }
+                        
+                        // Kick / Bass synth
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        
+                        if (step % 2 === 0) {
+                            osc.frequency.setValueAtTime(120, ctx.currentTime);
+                            osc.frequency.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                        } else {
+                            osc.frequency.setValueAtTime(300, ctx.currentTime);
+                            gain.gain.setValueAtTime(0.05, ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                        }
+                        
+                        osc.start();
+                        osc.stop(ctx.currentTime + 0.2);
+                        step = (step + 1) % 4;
+                    }, 250);
+
+                    isAudioPlaying = true;
+                    audioIcon.classList.add('text-brand-pink', 'animate-pulse');
+                    showToast('Ambient Beats Active 🎵', 'Enjoy the interactive studio rhythm.');
+                } catch (e) {
+                    console.log('Audio Context restricted.');
+                }
+            } else {
+                isAudioPlaying = false;
+                audioIcon.classList.remove('text-brand-pink', 'animate-pulse');
+            }
+        }
+
+        // 8. INTERACTIVE CANVAS RHYTHM TRAIL PARTICLES
+        function initParticleCanvas() {
+            const canvas = document.getElementById('particleCanvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            window.addEventListener('mousemove', (e) => {
+                if (Math.random() < 0.4) {
+                    particles.push({
+                        x: e.clientX,
+                        y: e.clientY,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        radius: Math.random() * 3 + 1,
+                        color: ['#ff2d55', '#833ab4', '#00f2fe', '#ffd700'][Math.floor(Math.random() * 4)],
+                        alpha: 1
+                    });
+                }
+            });
+
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    let p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.alpha -= 0.02;
+
+                    if (p.alpha <= 0) {
+                        particles.splice(i, 1);
+                        i--;
+                        continue;
+                    }
+
+                    ctx.save();
+                    ctx.globalAlpha = p.alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = p.color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+                requestAnimationFrame(render);
+            }
+            render();
+        }
+    </script>
+</body>
+</html>
